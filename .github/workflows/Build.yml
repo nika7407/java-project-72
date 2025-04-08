@@ -14,8 +14,8 @@ jobs:
         with:
           java-version: '20'
           distribution: 'temurin'
-      - name: Make gradlew executable
-        run: chmod +x ./app/gradlew
+   #   - name: Make gradlew executable
+    #    run: chmod +x ./app/gradlew
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 8.3
