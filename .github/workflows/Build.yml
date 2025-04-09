@@ -22,9 +22,10 @@ jobs:
       - run: make build
       - run: make lint
       - run: make test
+
       - name: Generate and prepare JaCoCo report
-        run: |
-          make report
+        run: make report
+
       - name: Upload coverage to QLTY
         uses: qltysh/qlty-action/coverage@main
         with:
