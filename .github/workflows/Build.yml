@@ -1,8 +1,8 @@
 name: Java CI
 
 on:
-  - push
-  - pull_request
+  push:
+  pull_request:
 
 jobs:
   build:
@@ -22,12 +22,14 @@ jobs:
       - run: make build
       - run: make lint
       - run: make test
-      - name: Publish code coverage
-        uses: paambaati/codeclimate-action@v9.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
-          JACOCO_SOURCE_PATH: app/src/main/java
+      - name: Generate and prepare JaCoCo report
+        run: |
+          ./app/gradlew jacocoTestReport
+          mkdir -p reports
+          cp app/build/reports/jacoco/test/jacocoTestReport.xml reports/coverage.xml
+      - name: Upload coverage to QLTY
+        uses: qltysh/qlty-action/coverage@main
         with:
-          coverageCommand: make report
-          coverageLocations: ${{github.workspace}}/app/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
-     #meowm
+          coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: reports/coverage.xml
+          #idk
