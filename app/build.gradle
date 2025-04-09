@@ -14,8 +14,17 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine' // версия подтянется через BOM
+
+    // Добавить недостающую часть платформы:
+    testImplementation 'org.junit.platform:junit-platform-engine:1.10.0'
+    testImplementation 'org.junit.platform:junit-platform-commons:1.10.0'
+
     implementation 'info.picocli:picocli:4.7.6'
 }
+
+
+
 checkstyle {
     toolVersion = "10.12.4"
     configFile = file("config/checkstyle/checkstyle.xml")
