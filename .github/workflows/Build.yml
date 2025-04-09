@@ -24,10 +24,9 @@ jobs:
       - run: make test
       - name: Generate and prepare JaCoCo report
         run: |
-          make report 
-          cp app/build/reports/jacoco/test/jacocoTestReport.xml reports/coverage.xml
+          make report
       - name: Upload coverage to QLTY
         uses: qltysh/qlty-action/coverage@main
         with:
           QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
-          files: reports/coverage.xml
+          files: app/build/reports/jacoco/jacocoTestReport.xml
