@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'jacoco'
     id 'checkstyle'
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22' // Kotlin плагин
 }
 
 group = 'hexlet.code'
@@ -12,24 +14,35 @@ repositories {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
+    // Kotlin зависимости
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.22'
+
+    // Javalin
+    implementation 'io.javalin:javalin:6.3.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+
+    // Остальные зависимости
+    implementation 'com.h2database:h2:2.2.224'
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    implementation 'org.apache.commons:commons-text:1.11.0'
+    implementation 'gg.jte:jte:3.1.9'
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
+
+    testImplementation platform('org.junit:junit-bom:5.10.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine' // версия подтянется через BOM
-
-    // Добавить недостающую часть платформы:
-    testImplementation 'org.junit.platform:junit-platform-engine:1.10.0'
-    testImplementation 'org.junit.platform:junit-platform-commons:1.10.0'
-
-    implementation 'info.picocli:picocli:4.7.6'
+    testImplementation 'org.assertj:assertj-core:3.25.3'
 }
 
-
+// Остальные настройки остаются без изменений
+application {
+    mainClass = 'hexlet.code.App'
+}
 
 checkstyle {
     toolVersion = "10.12.4"
     configFile = file("config/checkstyle/checkstyle.xml")
 }
-
 
 test {
     useJUnitPlatform()
@@ -41,7 +54,7 @@ jacoco {
 
 tasks.test {
     useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.jacocoTestReport {
