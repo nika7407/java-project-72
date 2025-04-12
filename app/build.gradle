@@ -14,11 +14,10 @@ repositories {
 }
 
 dependencies {
-    // Kotlin зависимости
+    // Kotlin, зачем?
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22'
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.22'
 
-    // Javalin
     implementation 'io.javalin:javalin:6.3.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 
@@ -28,10 +27,14 @@ dependencies {
     implementation 'org.apache.commons:commons-text:1.11.0'
     implementation 'gg.jte:jte:3.1.9'
     implementation 'org.slf4j:slf4j-simple:2.0.9'
-
+    implementation 'com.zaxxer:HikariCP:6.3.0'
+    implementation 'com.h2database:h2:2.2.224'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
     testImplementation platform('org.junit:junit-bom:5.10.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.assertj:assertj-core:3.25.3'
+    runtimeOnly 'com.h2database:h2:2.2.224'
 }
 
 // Остальные настройки остаются без изменений
