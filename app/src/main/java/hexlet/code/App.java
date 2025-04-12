@@ -3,13 +3,11 @@ package hexlet.code;
 import database.BaseRepository;
 import database.DataBaseInitializer;
 import database.DatabaseConfig;
-import hexlet.code.model.Url;
+
 import io.javalin.Javalin;
 
 import java.sql.SQLException;
-// import io.javalin.rendering.template.JavalinJte;
-// import static io.javalin.rendering.template.TemplateUtil.model;
-// import io.javalin.rendering.template.JavalinJte;
+
 
 public class App {
 
