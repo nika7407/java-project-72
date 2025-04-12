@@ -35,6 +35,6 @@ public class AppTest {
         List<Url> urls = BaseRepository.getEntities();
 
         Assertions.assertEquals(1, urls.size());
-        Assertions.assertEquals("https://example.com", urls.getFirst().getName());
+        Assertions.assertEquals("https://example.com", urls.get(0).getName());
     }
 }
