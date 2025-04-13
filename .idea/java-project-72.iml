@@ -25,5 +25,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Gradle: org.projectlombok:lombok:1.18.30" level="project" />
+    <orderEntry type="library" name="Gradle: gg.jte:jte:3.2.0" level="project" />
+    <orderEntry type="library" name="Gradle: gg.jte:jte-runtime:3.2.0" level="project" />
   </component>
 </module>

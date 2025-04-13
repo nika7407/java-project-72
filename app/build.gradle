@@ -3,7 +3,7 @@ plugins {
     id 'jacoco'
     id 'checkstyle'
     id 'application'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22' // Kotlin плагин
+    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
 }
 
 group = 'hexlet.code'
@@ -18,10 +18,9 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22'
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.22'
 
-    implementation 'io.javalin:javalin:6.3.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 
-    // Остальные зависимости
+
     implementation 'com.h2database:h2:2.2.224'
     implementation 'com.zaxxer:HikariCP:5.1.0'
     implementation 'org.apache.commons:commons-text:1.11.0'
@@ -36,6 +35,10 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.25.3'
     runtimeOnly 'com.h2database:h2:2.2.224'
     implementation 'org.postgresql:postgresql:42.7.3'
+    implementation 'gg.jte:jte:3.2.0'
+    implementation 'io.javalin:javalin:6.1.3'
+    implementation 'io.javalin:javalin-rendering:6.1.3'
+    implementation 'io.javalin:javalin-bundle:6.1.3'
 }
 
 // Остальные настройки остаются без изменений
