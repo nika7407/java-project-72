@@ -53,4 +53,14 @@ public class BaseRepository  {
         }
         return list;
     }
+
+    public static boolean exists(String name)  {
+       try {
+           return getEntities().stream()
+                   .anyMatch(value -> value.getName().equals(name));
+       } catch (SQLException e) {
+           return false;
+       }
+    }
+
 }

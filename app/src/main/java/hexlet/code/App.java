@@ -1,14 +1,14 @@
 package hexlet.code;
 
+import controller.UrlController;
 import database.BaseRepository;
 import database.DataBaseInitializer;
 import database.DatabaseConfig;
-
 import io.javalin.Javalin;
-
 import java.sql.SQLException;
 import static render.TemplateConfig.createTemplateEngine;
 import io.javalin.rendering.template.JavalinJte;
+import util.NamedRoutes;
 
 public class App {
 
@@ -22,8 +22,8 @@ public class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get("/", ctx -> ctx.render("pages/mainPage.jte"));
-
+        app.get(NamedRoutes.rootPath(), UrlController::getMainPage);
+        app.post(NamedRoutes.urlsPath(),UrlController::postMainPage);
 
         return app;
     }
