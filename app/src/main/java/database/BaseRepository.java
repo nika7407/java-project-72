@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class BaseRepository  {
 
@@ -61,6 +62,20 @@ public class BaseRepository  {
        } catch (SQLException e) {
            return false;
        }
+    }
+
+    public static Optional<Url> getUrlByName(String name) throws SQLException  {
+            return getEntities().stream()
+                    .filter(url -> url.getName().equals(name))
+                    .findFirst();
+
+    }
+
+    public static Optional<Url> getUrlById(Long id) throws SQLException  {
+        return getEntities().stream()
+                .filter(url -> url.getId().equals(id))
+                .findFirst();
+
     }
 
 }
