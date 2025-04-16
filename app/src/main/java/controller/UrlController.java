@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class UrlController {
 
@@ -40,7 +41,7 @@ public class UrlController {
 
          if(!BaseRepository.exists(name)){
            BaseRepository.save(new Url(name));
-           ctx.sessionAttribute("flash", "Page Successfully saved");
+           ctx.sessionAttribute("flash", "Page Saved");
            getMainPage(ctx);
 
         } else {
@@ -76,6 +77,10 @@ public class UrlController {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (NoSuchElementException e) {
+            ctx.sessionAttribute("flash","Such element does not exists");
+            ctx.status(404);
+            getMainPage(ctx, null);
         }
 
     }
