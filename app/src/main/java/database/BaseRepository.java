@@ -56,16 +56,16 @@ public class BaseRepository  {
     }
 
     public static boolean exists(String name)  {
-       try {
-           return getEntities().stream()
-                   .anyMatch(value -> value.getName().equals(name));
-       } catch (SQLException e) {
-           return false;
-       }
+        try {
+            return getEntities().stream()
+                    .anyMatch(value -> value.getName().equals(name));
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     public static Optional<Url> getUrlByName(String name) throws SQLException  {
-            return getEntities().stream()
+        return getEntities().stream()
                     .filter(url -> url.getName().equals(name))
                     .findFirst();
 

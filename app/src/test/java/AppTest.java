@@ -54,21 +54,21 @@ public class AppTest {
     }
 
     @Test
-    public void testSaveUrl(){
+    public void testSaveUrl() {
         JavalinTest.test(app, (server, client) -> {
             Url url = new Url("https://example.com");
             url.setCreatedAt(LocalDateTime.now());
             BaseRepository.save(url);
             List<Url> urls = BaseRepository.getEntities();
             long savedId = urls.get(0).getId();
-            var response = client.get("/urls/"+ savedId);
+            var response = client.get("/urls/" + savedId);
             assertThat(response.body().string()).contains("https://example.com");
             assertThat(response.code()).isEqualTo(200);
         });
     }
 
     @Test
-    public void testGETurls(){
+    public void testGETurls() {
         JavalinTest.test(app, (server, client) -> {
             Url url = new Url("https://example.com");
             url.setCreatedAt(LocalDateTime.now());

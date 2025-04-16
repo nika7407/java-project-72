@@ -4,7 +4,7 @@ import java.net.URL;
 
 public class BuildUrl {
 
-    public static String build(URL url){
+    public static String build(URL url) {
         StringBuilder result = new StringBuilder()
                 .append(url.getProtocol())
                 .append("://")

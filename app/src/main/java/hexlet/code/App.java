@@ -23,9 +23,9 @@ public class App {
         });
 
         app.get(NamedRoutes.rootPath(), UrlController::getMainPage);
-        app.post(NamedRoutes.urlsPath(),UrlController::postMainPage);
-        app.get(NamedRoutes.urlsPath(),UrlController::getUrls);
-        app.get(NamedRoutes.urlPath("{id}"),UrlController::getUrl);
+        app.post(NamedRoutes.urlsPath(), UrlController::postMainPage);
+        app.get(NamedRoutes.urlsPath(), UrlController::getUrls);
+        app.get(NamedRoutes.urlPath("{id}"), UrlController::getUrl);
         return app;
 
     }

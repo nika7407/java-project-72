@@ -7,7 +7,7 @@ public class NamedRoutes {
     }
 
 
-    public static String urlsPath(){
+    public static String urlsPath() {
         return "/urls";
     }
 
