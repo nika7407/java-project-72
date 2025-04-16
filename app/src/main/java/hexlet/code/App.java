@@ -27,6 +27,7 @@ public class App {
         app.get(NamedRoutes.urlsPath(),UrlController::getUrls);
         app.get(NamedRoutes.urlPath("{id}"),UrlController::getUrl);
         return app;
+
     }
 
     public static void main(String[] args) throws SQLException {

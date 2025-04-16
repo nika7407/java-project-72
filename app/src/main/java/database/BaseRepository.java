@@ -78,4 +78,12 @@ public class BaseRepository  {
 
     }
 
+    public static void clear() throws SQLException {
+        String sql = "TRUNCATE TABLE urls;";
+
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.executeUpdate();
+        }
+    }
 }

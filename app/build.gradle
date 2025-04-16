@@ -3,45 +3,51 @@ plugins {
     id 'jacoco'
     id 'checkstyle'
     id 'application'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.25'
 }
 
 group = 'hexlet.code'
 version = '1.0-SNAPSHOT'
+
+ext {
+    kotlinVersion = "1.9.25"
+    javalinVersion = "6.3.0"
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // Kotlin, зачем?
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22'
-    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.22'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
-
-
-    implementation 'com.h2database:h2:2.2.224'
-    implementation 'com.zaxxer:HikariCP:5.1.0'
     implementation 'org.apache.commons:commons-text:1.11.0'
-    implementation 'gg.jte:jte:3.1.9'
+    implementation 'gg.jte:jte:3.2.0'
     implementation 'org.slf4j:slf4j-simple:2.0.9'
+    implementation 'org.slf4j:slf4j-api:2.0.16'
+
     implementation 'com.zaxxer:HikariCP:6.3.0'
     implementation 'com.h2database:h2:2.2.224'
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-    testImplementation platform('org.junit:junit-bom:5.10.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.assertj:assertj-core:3.25.3'
     runtimeOnly 'com.h2database:h2:2.2.224'
     implementation 'org.postgresql:postgresql:42.7.3'
-    implementation 'gg.jte:jte:3.2.0'
-    implementation 'io.javalin:javalin:6.1.3'
-    implementation 'io.javalin:javalin-rendering:6.1.3'
-    implementation 'io.javalin:javalin-bundle:6.1.3'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    implementation "io.javalin:javalin:$javalinVersion"
+    implementation "io.javalin:javalin-rendering:$javalinVersion"
+    implementation "org.eclipse.jetty:jetty-server:11.0.23"
+
+    testImplementation "io.javalin:javalin-testtools:$javalinVersion"
+    testImplementation('io.javalin:javalin-testtools:6.3.0')
+    testImplementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+    testImplementation 'org.assertj:assertj-core:3.25.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
 }
 
-// Остальные настройки остаются без изменений
 application {
     mainClass = 'hexlet.code.App'
 }
@@ -53,15 +59,16 @@ checkstyle {
 
 test {
     useJUnitPlatform()
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat = 'full'
+        events = ['FAILED', 'PASSED', 'SKIPPED']
+        showStandardStreams = true
+    }
 }
 
 jacoco {
     toolVersion = "0.8.12"
-}
-
-tasks.test {
-    useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.jacocoTestReport {
