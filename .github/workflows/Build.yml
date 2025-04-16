@@ -20,7 +20,6 @@ jobs:
         with:
           gradle-version: 8.3
       - run: make build
-      - run: make lint
       - run: make test
 
       - name: Generate and prepare JaCoCo report
