@@ -26,4 +26,7 @@ public class UrlCheck {
         this.urlId = urlId;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
+
+    public UrlCheck() {
+    }
 }

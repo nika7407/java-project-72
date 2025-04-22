@@ -13,14 +13,27 @@ import java.time.LocalDateTime;
 public class Url {
 
     private Long id;   // <- this.
-    private final String name;
+    private  String name;
     private Timestamp createdAt;
+
+
+    // for adding last checks int the url index page
+    private Integer status;
+    private Timestamp lastCheck;
 
 
     public Url(String name) {
         this.name = name;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
+
+    public Url(long id, String name, Timestamp createdAt) {
+        this.id = id;
+        this.name = name;
+        this.createdAt = createdAt;
+    }
+
+
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = Timestamp.valueOf(createdAt);
     }

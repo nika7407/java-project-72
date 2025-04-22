@@ -19,8 +19,7 @@ public class App {
         DataBaseInitializer.initialize(source);
         // adding data source into repo, in local environment its h2 in render its postgre
         BaseRepository.setDataSource(source);
-        // clearing db
-        BaseRepository.clear();
+
 
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
@@ -31,6 +30,7 @@ public class App {
         app.post(NamedRoutes.urlsPath(), UrlController::postMainPage);
         app.get(NamedRoutes.urlsPath(), UrlController::getUrls);
         app.get(NamedRoutes.urlPath("{id}"), UrlController::getUrl);
+        app.post(NamedRoutes.urlChecksPath("{id}"), UrlController::postCheckUrl);
         return app;
 
     }

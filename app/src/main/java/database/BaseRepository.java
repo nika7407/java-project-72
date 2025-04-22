@@ -2,6 +2,7 @@ package database;
 
 import com.zaxxer.hikari.HikariDataSource;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import lombok.Setter;
 
 
@@ -90,5 +91,74 @@ public class BaseRepository {
             stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
         }
     }
+
+    public static void saveUrlCheck(UrlCheck check) throws SQLException {
+        String sql = "INSERT INTO url_checks (status_code, title, h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, check.getStatusCode());
+            stmt.setString(2, check.getTitle());
+            stmt.setString(3, check.getH1());
+            stmt.setString(4,check.getDescription());
+            stmt.setLong(5,check.getUrlId());
+            stmt.setTimestamp(6,check.getCreatedAt());
+            stmt.executeUpdate();
+            try (var keys = stmt.getGeneratedKeys()) {
+                if (keys.next()) {
+                    check.setId(keys.getLong(1));
+                }
+            }
+        }
+    }
+
+    public static List<UrlCheck> getCheckEntities(Long id) throws SQLException {
+        String sql = "SELECT id, status_code, title, h1, description, url_id, created_at FROM url_checks WHERE url_id = " + id + " ORDER BY id DESC";
+        List<UrlCheck> checks = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql);
+             var resultSet = stmt.executeQuery()) {
+
+            while (resultSet.next()) {
+                UrlCheck check = new UrlCheck();
+                check.setId(resultSet.getLong("id"));
+                check.setStatusCode(resultSet.getInt("status_code"));
+                check.setTitle(resultSet.getString("title"));
+                check.setH1(resultSet.getString("h1"));
+                check.setDescription(resultSet.getString("description"));
+                check.setUrlId(resultSet.getLong("url_id"));
+                check.setCreatedAt(Timestamp.from(resultSet.getTimestamp("created_at").toInstant()));
+
+                checks.add(check);
+            }
+        }
+        return checks;
+    }
+
+    public static List<UrlCheck> getCheckEntities() throws SQLException {
+        String sql = "SELECT id, status_code, title, h1, description, url_id, created_at FROM url_checks ORDER BY id DESC";
+        List<UrlCheck> checks = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql);
+             var resultSet = stmt.executeQuery()) {
+
+            while (resultSet.next()) {
+                UrlCheck check = new UrlCheck();
+                check.setId(resultSet.getLong("id"));
+                check.setStatusCode(resultSet.getInt("status_code"));
+                check.setTitle(resultSet.getString("title"));
+                check.setH1(resultSet.getString("h1"));
+                check.setDescription(resultSet.getString("description"));
+                check.setUrlId(resultSet.getLong("url_id"));
+                check.setCreatedAt(Timestamp.from(resultSet.getTimestamp("created_at").toInstant()));
+
+                checks.add(check);
+            }
+        }
+        return checks;
+    }
+
 }
 
