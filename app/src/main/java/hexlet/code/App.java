@@ -13,9 +13,14 @@ import util.NamedRoutes;
 public class App {
 
     public static Javalin getApp() throws SQLException {
+       // creating data source h2 /OR/ postgre
         var source = DatabaseConfig.getDataSource();
+        // create structure
         DataBaseInitializer.initialize(source);
+        // adding data source into repo, in local environment its h2 in render its postgre
         BaseRepository.setDataSource(source);
+        // clearing db
+        BaseRepository.clear();
 
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();

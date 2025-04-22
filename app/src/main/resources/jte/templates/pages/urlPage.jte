@@ -9,7 +9,11 @@
         <li class="list-group-item active">${page.getUrl().getName()}</li>
         <li class="list-group-item">Id: ${page.getUrl().getId()}</li>
         <li class="list-group-item">Created at: ${page.getUrl().getCreatedAt().toString()}</li>
-        </ul>
+    </ul>
+
+    <form action="${NamedRoutes.urlChecksPath(page.getUrl().getId())}" method="post">
+        <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">Check</button>
+    </form>
 
     <a href="${NamedRoutes.urlsPath()}" class="mt-5 me-3 mb-3 text-body-secondary fw-light fs-6">Url List</a>
     <a href="${NamedRoutes.rootPath()}" class="mt-5 mb-3 text-body-secondary fw-light fs-6">Main Page</a>

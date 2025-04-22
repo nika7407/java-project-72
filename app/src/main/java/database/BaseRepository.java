@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BaseRepository  {
+public class BaseRepository {
 
     @Setter
     public static HikariDataSource dataSource;
@@ -55,7 +55,7 @@ public class BaseRepository  {
         return list;
     }
 
-    public static boolean exists(String name)  {
+    public static boolean exists(String name) {
         try {
             return getEntities().stream()
                     .anyMatch(value -> value.getName().equals(name));
@@ -64,14 +64,14 @@ public class BaseRepository  {
         }
     }
 
-    public static Optional<Url> getUrlByName(String name) throws SQLException  {
+    public static Optional<Url> getUrlByName(String name) throws SQLException {
         return getEntities().stream()
-                    .filter(url -> url.getName().equals(name))
-                    .findFirst();
+                .filter(url -> url.getName().equals(name))
+                .findFirst();
 
     }
 
-    public static Optional<Url> getUrlById(Long id) throws SQLException  {
+    public static Optional<Url> getUrlById(Long id) throws SQLException {
         return getEntities().stream()
                 .filter(url -> url.getId().equals(id))
                 .findFirst();
@@ -79,11 +79,16 @@ public class BaseRepository  {
     }
 
     public static void clear() throws SQLException {
-        String sql = "TRUNCATE TABLE urls;";
-
         try (var conn = dataSource.getConnection();
-             var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.executeUpdate();
+             var stmt = conn.createStatement()) {
+
+            stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
+
+            stmt.execute("TRUNCATE TABLE url_checks RESTART IDENTITY");
+            stmt.execute("TRUNCATE TABLE urls RESTART IDENTITY");
+
+            stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
         }
     }
 }
+
