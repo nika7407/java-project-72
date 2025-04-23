@@ -33,8 +33,12 @@ public class Url {
         this.createdAt = createdAt;
     }
 
-
-    public void setCreatedAt(LocalDateTime createdAt) {
+    /**
+     * Sets creation timestamp from LocalDateTime.
+     * When overriding, ensure proper conversion to Timestamp
+     * @param createdAt creation time in LocalDateTime format
+     */
+    public final void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = Timestamp.valueOf(createdAt);
     }
 }

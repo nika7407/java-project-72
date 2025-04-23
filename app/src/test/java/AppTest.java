@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 
 import static database.BaseRepository.dataSource;
 
-public class AppTest {
+public final class AppTest {
 
     private static Javalin app;
     private static MockWebServer mockWebServer;
