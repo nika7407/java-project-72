@@ -82,12 +82,18 @@ public class BaseRepository {
         try (var conn = dataSource.getConnection();
              var stmt = conn.createStatement()) {
 
-            stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
+            String database = conn.getMetaData().getDatabaseProductName();
 
-            stmt.execute("TRUNCATE TABLE url_checks RESTART IDENTITY");
-            stmt.execute("TRUNCATE TABLE urls RESTART IDENTITY");
-
-            stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
+            if ("H2".equals(database)) {
+                stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
+                stmt.execute("TRUNCATE TABLE url_checks RESTART IDENTITY");
+                stmt.execute("TRUNCATE TABLE urls RESTART IDENTITY");
+                stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
+            } else if ("PostgreSQL".equals(database)) {
+                stmt.execute("TRUNCATE TABLE urls, url_checks RESTART IDENTITY CASCADE");
+            } else {
+                throw new SQLException("Unsupported database: " + database);
+            }
         }
     }
 
