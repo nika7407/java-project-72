@@ -1,41 +1,30 @@
 package controller;
 
-import static io.javalin.rendering.template.TemplateUtil.model;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import database.BaseRepository;
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
-import org.jsoup.Jsoup;
-import page.render.MainPage;
-import io.javalin.http.Context;
-import page.render.UrlPage;
-import page.render.UrlsPage;
-import util.BuildUrl;
 import io.javalin.http.Context;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+import page.render.MainPage;
+import page.render.UrlPage;
+import page.render.UrlsPage;
+import util.BuildUrl;
 import util.NamedRoutes;
-
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.Optional;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
+
+import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlController {
 
@@ -61,17 +50,17 @@ public class UrlController {
 
             if (!BaseRepository.exists(name)) {
                 BaseRepository.save(new Url(name));
-                ctx.sessionAttribute("flash", "Page Saved");
+                ctx.sessionAttribute("flash", "Страница успешно добавлена");
                 getMainPage(ctx);
 
             } else {
-                ctx.sessionAttribute("flash", "Page Already exists");
+                ctx.sessionAttribute("flash", "Страница уже существует");
                 getMainPage(ctx, input);
             }
 
 
         } catch (MalformedURLException | SQLException | IllegalArgumentException e) {
-            ctx.sessionAttribute("flash", "Not a URL");
+            ctx.sessionAttribute("flash", "Некорректный URL");
             getMainPage(ctx, input);
         }
 

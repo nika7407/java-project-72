@@ -5,7 +5,6 @@ import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import lombok.Setter;
 
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -93,16 +92,17 @@ public class BaseRepository {
     }
 
     public static void saveUrlCheck(UrlCheck check) throws SQLException {
-        String sql = "INSERT INTO url_checks (status_code, title, h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO url_checks (status_code, title, "
+                + "h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, check.getStatusCode());
             stmt.setString(2, check.getTitle());
             stmt.setString(3, check.getH1());
-            stmt.setString(4,check.getDescription());
-            stmt.setLong(5,check.getUrlId());
-            stmt.setTimestamp(6,check.getCreatedAt());
+            stmt.setString(4, check.getDescription());
+            stmt.setLong(5, check.getUrlId());
+            stmt.setTimestamp(6, check.getCreatedAt());
             stmt.executeUpdate();
             try (var keys = stmt.getGeneratedKeys()) {
                 if (keys.next()) {
@@ -113,7 +113,9 @@ public class BaseRepository {
     }
 
     public static List<UrlCheck> getCheckEntities(Long id) throws SQLException {
-        String sql = "SELECT id, status_code, title, h1, description, url_id, created_at FROM url_checks WHERE url_id = " + id + " ORDER BY id DESC";
+        String sql = "SELECT id, status_code, title, h1, "
+                + "description, url_id, created_at FROM url_checks WHERE url_id = " + id
+                + " ORDER BY id DESC";
         List<UrlCheck> checks = new ArrayList<>();
 
         try (Connection conn = dataSource.getConnection();
@@ -137,7 +139,8 @@ public class BaseRepository {
     }
 
     public static List<UrlCheck> getCheckEntities() throws SQLException {
-        String sql = "SELECT id, status_code, title, h1, description, url_id, created_at FROM url_checks ORDER BY id DESC";
+        String sql = "SELECT id, status_code, title, h1, description, url_id, "
+                + "created_at FROM url_checks ORDER BY id DESC";
         List<UrlCheck> checks = new ArrayList<>();
 
         try (Connection conn = dataSource.getConnection();
