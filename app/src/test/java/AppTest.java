@@ -62,6 +62,9 @@ public class AppTest {
     @AfterEach
     void clear() throws SQLException {
         BaseRepository.clear();
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
+        }
     }
 
     @Test
