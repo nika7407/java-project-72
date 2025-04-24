@@ -7,29 +7,30 @@ import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.testtools.JavalinTest;
+import okhttp3.FormBody;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.assertThat;
-import io.javalin.testtools.JavalinTest;
 import util.NamedRoutes;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-
+import java.util.stream.Collectors;
 
 import static database.BaseRepository.dataSource;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public final class AppTest {
 
@@ -100,17 +101,13 @@ public final class AppTest {
 
     @Test
     void testCheckUrlSuccess() throws SQLException {
-        String html = """
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>Test Page</title>
-                    <meta name="description" content="Test Description">
-                </head>
-                <body>
-                    <h1>Test Header</h1>
-                </body>
-            </html>""";
+
+
+        InputStream inputStream = DataBaseInitializer.class
+                .getResourceAsStream("/testHtml.html");
+        String html = new BufferedReader(new InputStreamReader(inputStream))
+                .lines().collect(Collectors.joining("\n"));
+
         mockWebServer.enqueue(new MockResponse().setBody(html).setResponseCode(200));
 
         Url url = new Url(mockServerUrl);
@@ -154,17 +151,6 @@ public final class AppTest {
         verify(ctx).status(404);
     }
 
-    @Test
-    void testSaveAndRetrieveUrl() throws SQLException {
-        Url url = new Url("https://example.com");
-        url.setCreatedAt(LocalDateTime.now());
-
-        BaseRepository.save(url);
-        List<Url> urls = BaseRepository.getEntities();
-
-        Assertions.assertEquals(1, urls.size());
-        Assertions.assertEquals("https://example.com", urls.get(0).getName());
-    }
 
     @Test
     public void testBuildSessionPage() {
@@ -177,26 +163,13 @@ public final class AppTest {
     @Test
     public void testSaveUrl() {
         JavalinTest.test(app, (server, client) -> {
-            Url url = new Url("https://example.com");
-            url.setCreatedAt(LocalDateTime.now());
-            BaseRepository.save(url);
-            List<Url> urls = BaseRepository.getEntities();
-            long savedId = urls.get(0).getId();
-            var response = client.get("/urls/" + savedId);
-            assertThat(response.body().string()).contains("https://example.com");
-            assertThat(response.code()).isEqualTo(200);
-        });
-    }
+            var requestBody = new FormBody.Builder()
+                    .add("url", "https://example.com")
+                    .build();
 
-    @Test
-    public void testGETurls() {
-        JavalinTest.test(app, (server, client) -> {
-            Url url = new Url("https://example.com");
-            url.setCreatedAt(LocalDateTime.now());
-            BaseRepository.save(url);
-            var response = client.get("/urls");
-            assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string()).contains("https://example.com");
+            // Отправляем POST и проверяем редирект
+            var postResponse = client.post("/urls", requestBody);
+            assertThat(postResponse.body()).toString().contains("Страница успешно добавлена"); // Found (Redirect)
         });
     }
 

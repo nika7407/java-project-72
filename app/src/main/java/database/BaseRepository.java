@@ -19,6 +19,7 @@ public class BaseRepository {
     public static HikariDataSource dataSource;
 
     public static void save(Url product) throws SQLException {
+        product.setCreatedAt(new Timestamp(System.currentTimeMillis()).toLocalDateTime());
         String sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
 
         try (var conn = dataSource.getConnection();

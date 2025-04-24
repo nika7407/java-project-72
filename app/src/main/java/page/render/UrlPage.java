@@ -12,4 +12,5 @@ import java.util.List;
 public class UrlPage {
     private Url url;
     private List<UrlCheck> check;
+    private String flash;
 }

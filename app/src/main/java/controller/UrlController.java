@@ -96,7 +96,7 @@ public class UrlController {
 
             List<UrlCheck> list  = BaseRepository.getCheckEntities(id);
 
-            var page = new UrlPage(url, list);
+            var page = new UrlPage(url, list, ctx.consumeSessionAttribute("flash"));
             ctx.render("pages/urlPage.jte", model("page", page));
 
         } catch (SQLException e) {
@@ -127,12 +127,13 @@ public class UrlController {
             }
             Url url = urlOptional.get();
 
-            HttpResponse<String> response;
+            HttpResponse<String> response = null;
             try {
                 response = Unirest.get(url.getName()).asString();
             } catch (UnirestException e) {
-                ctx.status(500).result("Request failed: " + e.getMessage());
-                return;
+                ctx.status(500);
+                ctx.sessionAttribute("flash", "Некорректный адрес");
+                getUrl(ctx);
             }
 
             Document doc = Jsoup.parse(response.getBody());
@@ -155,9 +156,13 @@ public class UrlController {
             ctx.redirect(NamedRoutes.urlPath(id));
 
         } catch (SQLException e) {
-            ctx.status(500).result("Database error");
+            ctx.status(500);
+            ctx.sessionAttribute("flash", "Ошибка Базы данных");
+            getUrl(ctx);
         } catch (Exception e) {
-            ctx.status(500).result("Unexpected error: " + e.getMessage());
+            ctx.status(500);
+            ctx.sessionAttribute("flash", "Некорректный адрес");
+            getUrl(ctx);
         }
     }
 

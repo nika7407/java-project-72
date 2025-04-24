@@ -5,6 +5,11 @@
 
 @template.mainPageTemplate(content = @`
     <body class="container mt-5">
+    @if(page.getFlash() != null)
+        <div class="rounded-0 m-0 alert alert-dismissible fade show alert-danger">
+            ${page.getFlash()}
+        </div>
+    @endif
     <h1 class="h3 mb-3 font-weight-normal">Submited URL</h1>
     <ul class="list-group">
         <li class="list-group-item active">${page.getUrl().getName()}</li>
