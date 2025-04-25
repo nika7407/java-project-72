@@ -69,17 +69,6 @@ public class UrlController {
     public static void getUrls(Context ctx) {
         try {
             List<Url> urls  = UrlRepository.getEntities();
-            List<UrlCheck> checks = UrlCheckRepository.getCheckEntities();
-
-//            urls.forEach(url -> {
-//                checks.stream()
-//                        .filter(check -> check.getUrlId().equals(url.getId()))
-//                        .max(Comparator.comparing(UrlCheck::getCreatedAt))
-//                        .ifPresent(latestCheck -> {
-//                            url.setStatus(latestCheck.getStatusCode());
-//                            url.setLastCheck(latestCheck.getCreatedAt());
-//                        });
-//            });
 
             var page = new UrlsPage(urls);
             ctx.render("pages/urlsPageTemplate.jte", model("page", page));
@@ -151,8 +140,6 @@ public class UrlController {
             );
 
             UrlCheckRepository.saveUrlCheck(check);
-//            url.setStatus(response.getStatus());
-//            url.setLastCheck(check.getCreatedAt());
             ctx.redirect(NamedRoutes.urlPath(id));
 
         } catch (SQLException e) {
