@@ -1,4 +1,4 @@
-package page.render;
+package hexlet.code.render;
 
 
 import lombok.AllArgsConstructor;

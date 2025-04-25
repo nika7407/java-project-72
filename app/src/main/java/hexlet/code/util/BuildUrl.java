@@ -1,4 +1,4 @@
-package util;
+package hexlet.code.util;
 
 import java.net.URL;
 

@@ -1,23 +1,23 @@
 package hexlet.code;
 
-import controller.UrlController;
-import database.BaseRepository;
-import database.DataBaseInitializer;
-import database.DatabaseConfig;
+import hexlet.code.controller.UrlController;
+import hexlet.code.database.BaseRepository;
+import hexlet.code.database.DataBaseInitializer;
+import hexlet.code.database.DatabaseConfig;
 import io.javalin.Javalin;
 import java.sql.SQLException;
-import static render.TemplateConfig.createTemplateEngine;
+import static hexlet.code.render.TemplateConfig.createTemplateEngine;
 import io.javalin.rendering.template.JavalinJte;
-import util.NamedRoutes;
+import hexlet.code.util.NamedRoutes;
 
 public class App {
 
     public static Javalin getApp() throws SQLException {
        // creating data source h2 /OR/ postgre
         var source = DatabaseConfig.getDataSource();
-        // create structure
+        // create tables if they do not exist
         DataBaseInitializer.initialize(source);
-        // adding data source into repo, in local environment its h2 in render its postgre
+        // adding dataSource into repo, in local environment its h2 in render its postgre
         BaseRepository.setDataSource(source);
 
 

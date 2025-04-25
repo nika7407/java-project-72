@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 //id, name, createdAt.
 
 @Setter
@@ -15,12 +14,6 @@ public class Url {
     private Long id;   // <- this.
     private  String name;
     private Timestamp createdAt;
-
-
-    // for adding last checks int the url index page
-    private Integer status;
-    private Timestamp lastCheck;
-
 
     public Url(String name) {
         this.name = name;
@@ -33,11 +26,10 @@ public class Url {
     }
 
     /**
-     * Sets creation timestamp from LocalDateTime.
-     * When overriding, ensure proper conversion to Timestamp
+     * Sets creation timestamp.
      * @param createdAt creation time in LocalDateTime format
      */
-    public final void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = Timestamp.valueOf(createdAt);
+    public final void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 }

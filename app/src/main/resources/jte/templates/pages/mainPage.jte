@@ -1,5 +1,5 @@
-@import page.render.MainPage
-@import util.NamedRoutes
+@import hexlet.code.render.MainPage
+@import hexlet.code.util.NamedRoutes
 @param MainPage page
 
 

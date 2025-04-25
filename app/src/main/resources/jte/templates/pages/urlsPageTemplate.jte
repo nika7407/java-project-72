@@ -1,6 +1,7 @@
+@import hexlet.code.database.UrlCheckRepository
 @import hexlet.code.model.Url
-@import page.render.UrlsPage
-@import util.NamedRoutes
+@import hexlet.code.render.UrlsPage
+@import hexlet.code.util.NamedRoutes
 @param UrlsPage page
 
 @template.mainPageTemplate(content = @`
@@ -13,12 +14,12 @@
         <li class="list-group-item">
             <a href="${NamedRoutes.urlPath(url.getId())}" class="">${url.getName()}</a>
         </li>
-            @if(url.getLastCheck() != null)
+            @if(UrlCheckRepository.getLastCheckStatusAndTime(url.getId()).getCreatedAt() != null)
             <li class="list-group-item">
-               Status : ${url.getStatus()}
+               Status : ${UrlCheckRepository.getLastCheckStatusAndTime(url.getId()).getStatusCode()}
             </li>
                 <li class="list-group-item">
-                Date : ${url.getLastCheck().toString()}
+                Date : ${UrlCheckRepository.getLastCheckStatusAndTime(url.getId()).getCreatedAt().toString()}
             </li>
             @endif
 

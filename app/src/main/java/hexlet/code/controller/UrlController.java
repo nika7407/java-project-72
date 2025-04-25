@@ -1,25 +1,25 @@
-package controller;
+package hexlet.code.controller;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import database.BaseRepository;
+import hexlet.code.database.UrlCheckRepository;
+import hexlet.code.database.UrlRepository;
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import io.javalin.http.Context;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import page.render.MainPage;
-import page.render.UrlPage;
-import page.render.UrlsPage;
-import util.BuildUrl;
-import util.NamedRoutes;
+import hexlet.code.render.MainPage;
+import hexlet.code.render.UrlPage;
+import hexlet.code.render.UrlsPage;
+import hexlet.code.util.BuildUrl;
+import hexlet.code.util.NamedRoutes;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -48,8 +48,8 @@ public class UrlController {
             URL url = uri.toURL();
             String name = BuildUrl.build(url);
 
-            if (!BaseRepository.exists(name)) {
-                BaseRepository.save(new Url(name));
+            if (!UrlRepository.exists(name)) {
+                UrlRepository.save(new Url(name));
                 ctx.sessionAttribute("flash", "Страница успешно добавлена");
                 getMainPage(ctx);
 
@@ -68,18 +68,18 @@ public class UrlController {
 
     public static void getUrls(Context ctx) {
         try {
-            List<Url> urls  = BaseRepository.getEntities();
-            List<UrlCheck> checks = BaseRepository.getCheckEntities();
+            List<Url> urls  = UrlRepository.getEntities();
+            List<UrlCheck> checks = UrlCheckRepository.getCheckEntities();
 
-            urls.forEach(url -> {
-                checks.stream()
-                        .filter(check -> check.getUrlId().equals(url.getId()))
-                        .max(Comparator.comparing(UrlCheck::getCreatedAt))
-                        .ifPresent(latestCheck -> {
-                            url.setStatus(latestCheck.getStatusCode());
-                            url.setLastCheck(latestCheck.getCreatedAt());
-                        });
-            });
+//            urls.forEach(url -> {
+//                checks.stream()
+//                        .filter(check -> check.getUrlId().equals(url.getId()))
+//                        .max(Comparator.comparing(UrlCheck::getCreatedAt))
+//                        .ifPresent(latestCheck -> {
+//                            url.setStatus(latestCheck.getStatusCode());
+//                            url.setLastCheck(latestCheck.getCreatedAt());
+//                        });
+//            });
 
             var page = new UrlsPage(urls);
             ctx.render("pages/urlsPageTemplate.jte", model("page", page));
@@ -92,9 +92,9 @@ public class UrlController {
     public static void getUrl(Context ctx) {
         try {
             Long id = Long.valueOf(ctx.pathParam("id"));
-            var url = BaseRepository.getUrlById(id).get();
+            var url = UrlRepository.getUrlById(id).get();
 
-            List<UrlCheck> list  = BaseRepository.getCheckEntities(id);
+            List<UrlCheck> list  = UrlCheckRepository.getCheckEntities(id);
 
             var page = new UrlPage(url, list, ctx.consumeSessionAttribute("flash"));
             ctx.render("pages/urlPage.jte", model("page", page));
@@ -120,7 +120,7 @@ public class UrlController {
         }
 
         try {
-            Optional<Url> urlOptional = BaseRepository.getUrlById(id);
+            Optional<Url> urlOptional = UrlRepository.getUrlById(id);
             if (urlOptional.isEmpty()) {
                 ctx.status(404);
                 return;
@@ -150,9 +150,9 @@ public class UrlController {
                     id
             );
 
-            BaseRepository.saveUrlCheck(check);
-            url.setStatus(response.getStatus());
-            url.setLastCheck(check.getCreatedAt());
+            UrlCheckRepository.saveUrlCheck(check);
+//            url.setStatus(response.getStatus());
+//            url.setLastCheck(check.getCreatedAt());
             ctx.redirect(NamedRoutes.urlPath(id));
 
         } catch (SQLException e) {

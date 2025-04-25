@@ -1,4 +1,4 @@
-package render;
+package hexlet.code.render;
 
 import hexlet.code.App;
 import gg.jte.ContentType;

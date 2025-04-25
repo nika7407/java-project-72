@@ -1,8 +1,10 @@
-import controller.UrlController;
-import database.BaseRepository;
-import database.DataBaseInitializer;
-import database.DatabaseConfig;
+import hexlet.code.controller.UrlController;
+import hexlet.code.database.BaseRepository;
+import hexlet.code.database.DataBaseInitializer;
+import hexlet.code.database.DatabaseConfig;
 import hexlet.code.App;
+import hexlet.code.database.UrlCheckRepository;
+import hexlet.code.database.UrlRepository;
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import io.javalin.Javalin;
@@ -16,7 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import util.NamedRoutes;
+import hexlet.code.util.NamedRoutes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +28,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static database.BaseRepository.dataSource;
+import static hexlet.code.database.BaseRepository.dataSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -57,12 +59,12 @@ public final class AppTest {
         dataSource = DatabaseConfig.getDataSource();
         DataBaseInitializer.initialize(dataSource);
         BaseRepository.setDataSource(dataSource);
-        BaseRepository.clear();
+        UrlRepository.clear();
     }
 
     @AfterEach
     void clear() throws SQLException {
-        BaseRepository.clear();
+        UrlRepository.clear();
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
         }
@@ -91,7 +93,7 @@ public final class AppTest {
 
     @Test
     void testAddExistingUrl() throws SQLException {
-        BaseRepository.save(new Url("https://mvnrepository.com"));
+        UrlRepository.save(new Url("https://mvnrepository.com"));
         Context ctx = mock(Context.class);
         when(ctx.formParam("url")).thenReturn("https://mvnrepository.com");
 
@@ -111,7 +113,7 @@ public final class AppTest {
         mockWebServer.enqueue(new MockResponse().setBody(html).setResponseCode(200));
 
         Url url = new Url(mockServerUrl);
-        BaseRepository.save(url);
+        UrlRepository.save(url);
         Long id = url.getId();
 
         Context ctx = mock(Context.class);
@@ -120,7 +122,7 @@ public final class AppTest {
         UrlController.postCheckUrl(ctx);
 
         verify(ctx).redirect(NamedRoutes.urlPath(id));
-        List<UrlCheck> checks = BaseRepository.getCheckEntities(id);
+        List<UrlCheck> checks = UrlCheckRepository.getCheckEntities(id);
         assertThat(checks.get(0).getStatusCode()).isEqualTo(200);
     }
 
@@ -129,7 +131,7 @@ public final class AppTest {
         mockWebServer.enqueue(new MockResponse().setResponseCode(500));
 
         Url url = new Url(mockServerUrl);
-        BaseRepository.save(url);
+        UrlRepository.save(url);
         Long id = url.getId();
 
         Context ctx = mock(Context.class);
@@ -137,7 +139,7 @@ public final class AppTest {
 
         UrlController.postCheckUrl(ctx);
 
-        List<UrlCheck> checks = BaseRepository.getCheckEntities(id);
+        List<UrlCheck> checks = UrlCheckRepository.getCheckEntities(id);
         assertThat(checks.get(0).getStatusCode()).isEqualTo(500);
     }
 

@@ -1,6 +1,6 @@
 @import hexlet.code.model.UrlCheck
-@import page.render.UrlPage
-@import util.NamedRoutes
+@import hexlet.code.render.UrlPage
+@import hexlet.code.util.NamedRoutes
 @param UrlPage page
 
 @template.mainPageTemplate(content = @`
