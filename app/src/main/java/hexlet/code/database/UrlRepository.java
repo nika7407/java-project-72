@@ -19,12 +19,13 @@ public class UrlRepository extends BaseRepository {
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, product.getName());
-            stmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            Timestamp time = Timestamp.valueOf(LocalDateTime.now());
+            stmt.setTimestamp(2, time);
+            product.setCreatedAt(time);
             stmt.executeUpdate();
             try (var keys = stmt.getGeneratedKeys()) {
                 if (keys.next()) {
                     product.setId(keys.getLong(1));
-                    product.setCreatedAt(keys.getTimestamp(2));
                 }
             }
         }
