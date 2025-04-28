@@ -29,6 +29,7 @@ public class UrlCheck {
 
     public UrlCheck() {
     }
+
     public UrlCheck(Integer statusCode, Timestamp createdAt) {
         this.statusCode = statusCode;
         this.createdAt = createdAt;

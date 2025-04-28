@@ -21,7 +21,9 @@ import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -70,14 +72,15 @@ public class UrlController {
     public static void getUrls(Context ctx) {
         try {
             List<Url> urls  = UrlRepository.getEntities();
-            List<UrlCheck> checks = new ArrayList<>();
+            Map<Long, UrlCheck> checks = new HashMap<>();
             for (Url url : urls) {
-                var lastCheck = UrlCheckRepository.getLastCheckStatusAndTime(url.getId());
+                UrlCheck lastCheck = UrlCheckRepository.getLastCheckStatusAndTime(url.getId());
                 if (lastCheck != null) {
-                    checks.add(lastCheck);
+                    checks.put(url.getId(), lastCheck);
                 }
 
             }
+            System.out.println(checks);
             var page = new UrlsPage(urls, checks);
             ctx.render("pages/urlsPageTemplate.jte", model("page", page));
         } catch (SQLException e) {
