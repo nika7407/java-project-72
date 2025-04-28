@@ -9,23 +9,23 @@
     <body class="container mt-5">
     <h1 class="h3 mb-3 font-weight-normal">Submited URL listL</h1>
 
-        @for(Url url : page.getList())
-            <ul class="list-group">
-        <li class="list-group-item">
-            <a href="${NamedRoutes.urlPath(url.getId())}" class="">${url.getName()}</a>
-        </li>
-            @if(!FindChecks.find(page.getChecks(),url.getId()).isEmpty())
+    @for(Url url : page.getList())
+        <ul class="list-group">
             <li class="list-group-item">
-               Status : ${FindChecks.find(page.getChecks(),url.getId()).get().getStatusCode()}
+                <a href="${NamedRoutes.urlPath(url.getId())}" class="">${url.getName()}</a>
             </li>
+            @if(!FindChecks.find(page.getChecks(),url.getId()).isEmpty())
                 <li class="list-group-item">
-                Date : ${FindChecks.find(page.getChecks(),url.getId()).get().getCreatedAt().toString()}
-            </li>
+                    Status : ${FindChecks.find(page.getChecks(),url.getId()).get().getStatusCode()}
+                </li>
+                <li class="list-group-item">
+                    Date : ${FindChecks.find(page.getChecks(),url.getId()).get().getCreatedAt().toString()}
+                </li>
             @endif
 
-    </ul>
-            <div class="mt-1 pt-1"> </div>
-        @endfor
+        </ul>
+        <div class="mt-1 pt-1"></div>
+    @endfor
 
 
     <a href="${NamedRoutes.rootPath()}" class="mt-6 mb-3 pt-5 text-body-secondary fw-light fs-6">Main Page</a>

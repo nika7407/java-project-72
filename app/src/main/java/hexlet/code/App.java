@@ -13,7 +13,7 @@ import hexlet.code.util.NamedRoutes;
 public class App {
 
     public static Javalin getApp() throws SQLException {
-       // creating data source h2 OR postgre
+       // creating data source h2 or postgre
         var source = DatabaseConfig.getDataSource();
         // create tables if they do not exist
         DataBaseInitializer.initialize(source);
