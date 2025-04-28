@@ -1,7 +1,6 @@
 package hexlet.code.render;
 
 
-import hexlet.code.database.UrlCheckRepository;
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import lombok.AllArgsConstructor;
