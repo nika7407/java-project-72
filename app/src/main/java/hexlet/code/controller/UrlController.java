@@ -73,8 +73,10 @@ public class UrlController {
             List<UrlCheck> checks = new ArrayList<>();
             for (Url url : urls) {
                 var lastCheck = UrlCheckRepository.getLastCheckStatusAndTime(url.getId());
-                if (lastCheck != null)
+                if (lastCheck != null) {
                     checks.add(lastCheck);
+                }
+
             }
             var page = new UrlsPage(urls, checks);
             ctx.render("pages/urlsPageTemplate.jte", model("page", page));

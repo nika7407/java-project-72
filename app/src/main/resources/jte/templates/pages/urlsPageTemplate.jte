@@ -1,4 +1,3 @@
-@import hexlet.code.database.UrlCheckRepository
 @import hexlet.code.model.Url
 @import hexlet.code.render.UrlsPage
 @import hexlet.code.util.NamedRoutes
