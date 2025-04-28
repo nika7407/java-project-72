@@ -8,17 +8,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class UrlRepository extends BaseRepository {
     public static void save(Url product) throws SQLException {
-        String sql = "INSERT INTO urls (name) VALUES (?)";
+        String sql = "INSERT INTO urls (name, created_at ) VALUES (?, ?)";
 
         try (var conn = dataSource.getConnection()) {
             try (var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setString(1, product.getName());
+                Timestamp time = Timestamp.valueOf(LocalDateTime.now());
+                stmt.setTimestamp(2, time);
                 stmt.executeUpdate();
 
                 try (var keys = stmt.getGeneratedKeys()) {
@@ -120,14 +123,11 @@ public class UrlRepository extends BaseRepository {
         try (var conn = dataSource.getConnection();
              var stmt = conn.createStatement()) {
 
-            conn.setAutoCommit(false); // Start transaction
-
             stmt.executeUpdate("DELETE FROM url_checks");
             stmt.executeUpdate("DELETE FROM urls");
-
-            conn.commit(); // End transaction
         }
     }
+
 
 
 
