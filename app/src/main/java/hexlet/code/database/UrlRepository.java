@@ -122,15 +122,8 @@ public class UrlRepository extends BaseRepository {
 
             conn.setAutoCommit(false); // Start transaction
 
-            // Disable foreign key checks (if necessary, especially in H2)
-            stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
-
-            // Clear child table first, then parent table
             stmt.executeUpdate("DELETE FROM url_checks");
             stmt.executeUpdate("DELETE FROM urls");
-
-            // Re-enable foreign key checks
-            stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
 
             conn.commit(); // End transaction
         }
