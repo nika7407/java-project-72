@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 public class Url {
 
     private Long id;   // <- this.
-    private  String name;
+    private String name;
     private Timestamp createdAt;
 
     public Url(String name) {
@@ -22,14 +22,6 @@ public class Url {
     public Url(long id, String name, Timestamp createdAt) {
         this.id = id;
         this.name = name;
-        this.createdAt = createdAt;
-    }
-
-    /**
-     * Sets creation timestamp.
-     * @param createdAt creation time in LocalDateTime format
-     */
-    public final void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 }

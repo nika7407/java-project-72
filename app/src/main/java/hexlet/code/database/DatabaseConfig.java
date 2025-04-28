@@ -6,7 +6,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class DatabaseConfig {
     private static final String DEFAULT_JDBC_URL = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;"
-            + "LOCK_TIMEOUT=10000;LOCK_MODE=0";
+            + "LOCK_TIMEOUT=10000;LOCK_MODE=0;MODE=PostgreSQL";
 
 
     public static HikariDataSource getDataSource() {

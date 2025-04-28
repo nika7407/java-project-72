@@ -3,36 +3,48 @@ package hexlet.code.database;
 import hexlet.code.model.Url;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class UrlRepository extends BaseRepository {
     public static void save(Url product) throws SQLException {
+        String sql = "INSERT INTO urls (name) VALUES (?)";
 
-        String sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
+        try (var conn = dataSource.getConnection()) {
+            try (var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, product.getName());
+                stmt.executeUpdate();
 
-        try (var conn = dataSource.getConnection();
-             var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, product.getName());
-            Timestamp time = Timestamp.valueOf(LocalDateTime.now());
-            stmt.setTimestamp(2, time);
-            product.setCreatedAt(time);
-            stmt.executeUpdate();
-            try (var keys = stmt.getGeneratedKeys()) {
-                if (keys.next()) {
-                    product.setId(keys.getLong(1));
+                try (var keys = stmt.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        product.setId(keys.getLong(1));
+                    } else {
+                        throw new SQLException("Failed to get generated ID");
+                    }
+                }
+            }
+
+            try (var stmt2 = conn.prepareStatement(
+                    "SELECT created_at FROM urls WHERE id = ?")) {
+                stmt2.setLong(1, product.getId());
+
+                try (var resultSet = stmt2.executeQuery()) {
+                    if (resultSet.next()) {
+                        product.setCreatedAt(resultSet.getTimestamp("created_at"));
+                    }
                 }
             }
         }
     }
 
     public static List<Url> getEntities() throws SQLException {
-        String sql = "SELECT id, name, created_at FROM urls";
+        String sql = "SELECT id, name, created_at FROM urls ORDER BY created_at DESC";
         List<Url> list = new ArrayList<>();
 
         try (Connection conn = dataSource.getConnection();
@@ -51,44 +63,76 @@ public class UrlRepository extends BaseRepository {
         return list;
     }
 
-    public static boolean exists(String name) {
-        try {
-            return getEntities().stream()
-                    .anyMatch(value -> value.getName().equals(name));
-        } catch (SQLException e) {
-            return false;
+    public static boolean exists(String name) throws SQLException {
+        String query = "SELECT * FROM urls WHERE name = (?)";
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, name);
+            var rs = stmt.executeQuery();
+            return rs.next();
         }
     }
 
     public static Optional<Url> getUrlByName(String name) throws SQLException {
-        return getEntities().stream()
-                .filter(url -> url.getName().equals(name))
-                .findFirst();
+        String query = "SELECT id, name, created_at FROM urls WHERE name = (?)";
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, name);
 
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    long id = rs.getLong("id");
+                    String nameToSet = rs.getString("name");
+                    Timestamp createdAt = rs.getTimestamp("created_at");
+
+                    Url url = new Url(id, name, createdAt);
+
+                    return Optional.of(url);
+                }
+                return Optional.empty();
+            }
+        }
     }
 
     public static Optional<Url> getUrlById(Long id) throws SQLException {
-        return getEntities().stream()
-                .filter(url -> url.getId().equals(id))
-                .findFirst();
+        String query = "SELECT id, name, created_at FROM urls WHERE id = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
+            stmt.setLong(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    long resultId = rs.getLong("id");
+                    String name = rs.getString("name");
+                    Timestamp createdAt = rs.getTimestamp("created_at");
+
+                    Url url = new Url(resultId, name, createdAt);
+
+                    return Optional.of(url);
+                }
+                return Optional.empty();
+            }
+        }
     }
 
     public static void clear() throws SQLException {
         try (var conn = dataSource.getConnection();
              var stmt = conn.createStatement()) {
 
-            String database = conn.getMetaData().getDatabaseProductName();
+            stmt.execute("TRUNCATE TABLE urls CASCADE");
+            stmt.execute("TRUNCATE TABLE url_checks CASCADE");
 
-            if ("H2".equals(database)) {
+            stmt.execute("ALTER SEQUENCE urls_id_seq RESTART");
+            stmt.execute("ALTER SEQUENCE url_checks_id_seq RESTART");
+
+        } catch (SQLException e) {
+            try (var conn = dataSource.getConnection();
+                 var stmt = conn.createStatement()) {
                 stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
-                stmt.execute("TRUNCATE TABLE url_checks RESTART IDENTITY");
-                stmt.execute("TRUNCATE TABLE urls RESTART IDENTITY");
+                stmt.execute("TRUNCATE TABLE urls");
+                stmt.execute("TRUNCATE TABLE url_checks");
                 stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
-            } else if ("PostgreSQL".equals(database)) {
-                stmt.execute("TRUNCATE TABLE urls, url_checks RESTART IDENTITY CASCADE");
-            } else {
-                throw new SQLException("Unsupported database: " + database);
             }
         }
     }
