@@ -36,7 +36,7 @@ public class UrlRepository extends BaseRepository {
 
                 try (var resultSet = stmt2.executeQuery()) {
                     if (resultSet.next()) {
-                        product.setCreatedAt(resultSet.getTimestamp("created_at"));
+                        product.setCreatedAt(Timestamp.valueOf(resultSet.getTimestamp("created_at").toLocalDateTime()));
                     }
                 }
             }
@@ -120,9 +120,8 @@ public class UrlRepository extends BaseRepository {
         try (var conn = dataSource.getConnection();
              var stmt = conn.createStatement()) {
 
-            stmt.execute("TRUNCATE TABLE urls");
-            stmt.execute("TRUNCATE TABLE url_checks");
-
+            stmt.execute("DELETE FROM urls");
+            stmt.execute("DELETE FROM url_checks");
 
         }
     }
