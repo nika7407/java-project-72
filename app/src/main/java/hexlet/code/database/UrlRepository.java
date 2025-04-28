@@ -120,11 +120,22 @@ public class UrlRepository extends BaseRepository {
         try (var conn = dataSource.getConnection();
              var stmt = conn.createStatement()) {
 
-            stmt.execute("DELETE FROM urls");
-            stmt.execute("DELETE FROM url_checks");
+            conn.setAutoCommit(false); // Start transaction
 
+            // Disable foreign key checks (if necessary, especially in H2)
+            stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
+
+            // Clear child table first, then parent table
+            stmt.executeUpdate("DELETE FROM url_checks");
+            stmt.executeUpdate("DELETE FROM urls");
+
+            // Re-enable foreign key checks
+            stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
+
+            conn.commit(); // End transaction
         }
     }
+
 
 
 }
