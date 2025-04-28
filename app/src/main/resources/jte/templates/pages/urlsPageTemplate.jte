@@ -2,7 +2,6 @@
 @import hexlet.code.model.UrlCheck
 @import hexlet.code.render.UrlsPage
 @import hexlet.code.util.NamedRoutes
-@import hexlet.code.util.FindChecks
 @param UrlsPage page
 
 @template.mainPageTemplate(content = @`
