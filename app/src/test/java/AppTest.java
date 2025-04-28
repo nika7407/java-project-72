@@ -163,7 +163,7 @@ public final class AppTest {
     }
 
     @Test
-    public void testSaveUrl() {
+    public void testMYSaveUrl() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = new FormBody.Builder()
                     .add("url", "https://example.com")
