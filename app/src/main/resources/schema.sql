@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS url_checks  (
   title VARCHAR(255),
   h1 VARCHAR(255),
   description TEXT,
-  url_id BIGINT REFERENCES urls(id),
+  url_id BIGINT,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

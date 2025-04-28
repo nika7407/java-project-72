@@ -120,20 +120,10 @@ public class UrlRepository extends BaseRepository {
         try (var conn = dataSource.getConnection();
              var stmt = conn.createStatement()) {
 
-            stmt.execute("TRUNCATE TABLE urls CASCADE");
-            stmt.execute("TRUNCATE TABLE url_checks CASCADE");
+            stmt.execute("TRUNCATE TABLE urls");
+            stmt.execute("TRUNCATE TABLE url_checks");
 
-            stmt.execute("ALTER SEQUENCE urls_id_seq RESTART");
-            stmt.execute("ALTER SEQUENCE url_checks_id_seq RESTART");
 
-        } catch (SQLException e) {
-            try (var conn = dataSource.getConnection();
-                 var stmt = conn.createStatement()) {
-                stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
-                stmt.execute("TRUNCATE TABLE urls");
-                stmt.execute("TRUNCATE TABLE url_checks");
-                stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
-            }
         }
     }
 
