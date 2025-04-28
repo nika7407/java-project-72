@@ -2,6 +2,7 @@
 @import hexlet.code.model.Url
 @import hexlet.code.render.UrlsPage
 @import hexlet.code.util.NamedRoutes
+@import hexlet.code.util.FindChecks
 @param UrlsPage page
 
 @template.mainPageTemplate(content = @`
@@ -14,12 +15,12 @@
         <li class="list-group-item">
             <a href="${NamedRoutes.urlPath(url.getId())}" class="">${url.getName()}</a>
         </li>
-            @if(UrlCheckRepository.getLastCheckStatusAndTime(url.getId()).getCreatedAt() != null)
+            @if(!FindChecks.find(page.getChecks(),url.getId()).isEmpty())
             <li class="list-group-item">
-               Status : ${UrlCheckRepository.getLastCheckStatusAndTime(url.getId()).getStatusCode()}
+               Status : ${FindChecks.find(page.getChecks(),url.getId()).get().getStatusCode()}
             </li>
                 <li class="list-group-item">
-                Date : ${UrlCheckRepository.getLastCheckStatusAndTime(url.getId()).getCreatedAt().toString()}
+                Date : ${FindChecks.find(page.getChecks(),url.getId()).get().getCreatedAt().toString()}
             </li>
             @endif
 

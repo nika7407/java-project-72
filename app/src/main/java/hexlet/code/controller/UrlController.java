@@ -7,19 +7,20 @@ import hexlet.code.database.UrlCheckRepository;
 import hexlet.code.database.UrlRepository;
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
-import io.javalin.http.Context;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import hexlet.code.render.MainPage;
 import hexlet.code.render.UrlPage;
 import hexlet.code.render.UrlsPage;
 import hexlet.code.util.BuildUrl;
 import hexlet.code.util.NamedRoutes;
+import io.javalin.http.Context;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -69,10 +70,14 @@ public class UrlController {
     public static void getUrls(Context ctx) {
         try {
             List<Url> urls  = UrlRepository.getEntities();
-
-            var page = new UrlsPage(urls);
+            List<UrlCheck> checks = new ArrayList<>();
+            for (Url url : urls) {
+                var lastCheck = UrlCheckRepository.getLastCheckStatusAndTime(url.getId());
+                if (lastCheck != null)
+                    checks.add(lastCheck);
+            }
+            var page = new UrlsPage(urls, checks);
             ctx.render("pages/urlsPageTemplate.jte", model("page", page));
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

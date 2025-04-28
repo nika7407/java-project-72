@@ -15,8 +15,9 @@ public class UrlCheckRepository extends BaseRepository {
         String sql = "INSERT INTO url_checks (status_code, title, "
                 + "h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (var conn = dataSource.getConnection();
-             var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (var conn = dataSource.getConnection()) {
+
+            var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, check.getStatusCode());
             stmt.setString(2, check.getTitle());
             stmt.setString(3, check.getH1());
@@ -29,34 +30,49 @@ public class UrlCheckRepository extends BaseRepository {
                     check.setId(keys.getLong(1));
                 }
             }
+
+
+            try (var stmt2 = conn.prepareStatement(
+                    "SELECT created_at FROM url_checks WHERE id = ?")) {
+                stmt2.setLong(1, check.getId());
+
+                try (var resultSet = stmt2.executeQuery()) {
+                    if (resultSet.next()) {
+                        check.setCreatedAt(Timestamp.valueOf(resultSet.getTimestamp("created_at").toLocalDateTime()));
+                    }
+                }
+            }
         }
     }
 
     public static List<UrlCheck> getCheckEntities(Long id) throws SQLException {
         String sql = "SELECT id, status_code, title, h1, "
-                + "description, url_id, created_at FROM url_checks WHERE url_id = " + id
+                + "description, url_id, created_at FROM url_checks WHERE url_id = ?"
                 + " ORDER BY id DESC";
         List<UrlCheck> checks = new ArrayList<>();
 
         try (Connection conn = dataSource.getConnection();
-             var stmt = conn.prepareStatement(sql);
-             var resultSet = stmt.executeQuery()) {
+             var stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
 
-            while (resultSet.next()) {
-                UrlCheck check = new UrlCheck();
-                check.setId(resultSet.getLong("id"));
-                check.setStatusCode(resultSet.getInt("status_code"));
-                check.setTitle(resultSet.getString("title"));
-                check.setH1(resultSet.getString("h1"));
-                check.setDescription(resultSet.getString("description"));
-                check.setUrlId(resultSet.getLong("url_id"));
-                check.setCreatedAt(Timestamp.from(resultSet.getTimestamp("created_at").toInstant()));
+            try (var resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    UrlCheck check = new UrlCheck();
+                    check.setId(resultSet.getLong("id"));
+                    check.setStatusCode(resultSet.getInt("status_code"));
+                    check.setTitle(resultSet.getString("title"));
+                    check.setH1(resultSet.getString("h1"));
+                    check.setDescription(resultSet.getString("description"));
+                    check.setUrlId(resultSet.getLong("url_id"));
+                    check.setCreatedAt(Timestamp.from(resultSet.getTimestamp("created_at").toInstant()));
 
-                checks.add(check);
+                    checks.add(check);
+                }
             }
         }
         return checks;
     }
+
 
     public static UrlCheck getLastCheckStatusAndTime(Long id)  {
         try {
