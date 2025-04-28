@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,8 @@ public class UrlCheckRepository extends BaseRepository {
             stmt.setString(3, check.getH1());
             stmt.setString(4, check.getDescription());
             stmt.setLong(5, check.getUrlId());
-            stmt.setTimestamp(6, check.getCreatedAt());
+            Timestamp time = Timestamp.valueOf(LocalDateTime.now());
+            stmt.setTimestamp(6, time);
             stmt.executeUpdate();
             try (var keys = stmt.getGeneratedKeys()) {
                 if (keys.next()) {
