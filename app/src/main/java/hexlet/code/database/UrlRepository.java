@@ -23,7 +23,7 @@ public class UrlRepository extends BaseRepository {
                 Timestamp time = Timestamp.valueOf(LocalDateTime.now());
                 stmt.setTimestamp(2, time);
                 stmt.executeUpdate();
-
+                product.setCreatedAt(time);
                 try (var keys = stmt.getGeneratedKeys()) {
                     if (keys.next()) {
                         product.setId(keys.getLong(1));
@@ -33,16 +33,7 @@ public class UrlRepository extends BaseRepository {
                 }
             }
 
-            try (var stmt2 = conn.prepareStatement(
-                    "SELECT created_at FROM urls WHERE id = ?")) {
-                stmt2.setLong(1, product.getId());
 
-                try (var resultSet = stmt2.executeQuery()) {
-                    if (resultSet.next()) {
-                        product.setCreatedAt(Timestamp.valueOf(resultSet.getTimestamp("created_at").toLocalDateTime()));
-                    }
-                }
-            }
         }
     }
 

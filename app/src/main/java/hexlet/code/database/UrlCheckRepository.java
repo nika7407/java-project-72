@@ -8,7 +8,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UrlCheckRepository extends BaseRepository {
 
@@ -27,23 +29,13 @@ public class UrlCheckRepository extends BaseRepository {
             Timestamp time = Timestamp.valueOf(LocalDateTime.now());
             stmt.setTimestamp(6, time);
             stmt.executeUpdate();
+            check.setCreatedAt(time);
             try (var keys = stmt.getGeneratedKeys()) {
                 if (keys.next()) {
                     check.setId(keys.getLong(1));
                 }
             }
 
-
-            try (var stmt2 = conn.prepareStatement(
-                    "SELECT created_at FROM url_checks WHERE id = ?")) {
-                stmt2.setLong(1, check.getId());
-
-                try (var resultSet = stmt2.executeQuery()) {
-                    if (resultSet.next()) {
-                        check.setCreatedAt(Timestamp.valueOf(resultSet.getTimestamp("created_at").toLocalDateTime()));
-                    }
-                }
-            }
         }
     }
 
@@ -76,21 +68,27 @@ public class UrlCheckRepository extends BaseRepository {
     }
 
 
-    public static UrlCheck getLastCheckStatusAndTime(Long id)  {
+    public static Map<Long, UrlCheck> getLastCheckStatusAndTime() {
         try {
-            String sql = "SELECT status_code, created_at FROM url_checks WHERE url_id = " + id
-                    + " ORDER BY id DESC LIMIT 1";
+            String sql = "SELECT DISTINCT ON (url_id) status_code, created_at, url_id"
+                    + "FROM url_checks"
+                    + "ORDER BY url_id, created_at DESC;";
             Integer status = null;
             Timestamp time = null;
+            Long id = null;
+            Map<Long, UrlCheck> map = new HashMap<>();
             try (Connection conn = dataSource.getConnection();
                  var stmt = conn.prepareStatement(sql);
                  var resultSet = stmt.executeQuery()) {
                 while (resultSet.next()) {
                     status = resultSet.getInt("status_code");
                     time = Timestamp.from(resultSet.getTimestamp("created_at").toInstant());
+                    id = resultSet.getLong("url_id");
+                    map.put(id, new UrlCheck(status, time));
                 }
             }
-            return new UrlCheck(status, time);
+            return map;
+
         } catch (SQLException e) {
             return null;
         }

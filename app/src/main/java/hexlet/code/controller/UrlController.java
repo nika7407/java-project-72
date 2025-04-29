@@ -71,15 +71,7 @@ public class UrlController {
     public static void getUrls(Context ctx) {
         try {
             List<Url> urls  = UrlRepository.getEntities();
-            Map<Long, UrlCheck> checks = new HashMap<>();
-            for (Url url : urls) {
-                UrlCheck lastCheck = UrlCheckRepository.getLastCheckStatusAndTime(url.getId());
-                if (lastCheck != null) {
-                    checks.put(url.getId(), lastCheck);
-                }
-
-            }
-            System.out.println(checks);
+            Map<Long, UrlCheck> checks = UrlCheckRepository.getLastCheckStatusAndTime();
             var page = new UrlsPage(urls, checks);
             ctx.render("pages/urlsPageTemplate.jte", model("page", page));
         } catch (SQLException e) {
