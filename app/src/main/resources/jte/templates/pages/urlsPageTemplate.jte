@@ -14,7 +14,7 @@
                 <a href="${NamedRoutes.urlPath(url.getId())}">${url.getName()}</a>
             </li>
 
-            @if(page.getChecks() != null && page.getChecks().get(url.getId()) != null && page.getChecks().get(url.getId()).getStatusCode() != null)
+            @if(page.getChecks() != null && page.getChecks().get(url.getId()) != null)
                 <li class="list-group-item">
                     Status: ${page.getChecks().get(url.getId()).getStatusCode()}
                 </li>

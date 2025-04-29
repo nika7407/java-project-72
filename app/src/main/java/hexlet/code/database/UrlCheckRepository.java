@@ -21,6 +21,7 @@ public class UrlCheckRepository extends BaseRepository {
         try (var conn = dataSource.getConnection()) {
 
             var stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
             stmt.setInt(1, check.getStatusCode());
             stmt.setString(2, check.getTitle());
             stmt.setString(3, check.getH1());
@@ -28,6 +29,7 @@ public class UrlCheckRepository extends BaseRepository {
             stmt.setLong(5, check.getUrlId());
             Timestamp time = Timestamp.valueOf(LocalDateTime.now());
             stmt.setTimestamp(6, time);
+
             stmt.executeUpdate();
             check.setCreatedAt(time);
             try (var keys = stmt.getGeneratedKeys()) {
@@ -71,20 +73,22 @@ public class UrlCheckRepository extends BaseRepository {
     public static Map<Long, UrlCheck> getLastCheckStatusAndTime() {
         try {
             String sql = "SELECT DISTINCT ON (url_id) status_code, created_at, url_id"
-                    + "FROM url_checks"
-                    + "ORDER BY url_id, created_at DESC;";
+                    + " FROM url_checks"
+                    + " ORDER BY url_id, created_at DESC;";
             Integer status = null;
-            Timestamp time = null;
-            Long id = null;
+            Timestamp createdAt = null;
+            Long urlId = null;
             Map<Long, UrlCheck> map = new HashMap<>();
             try (Connection conn = dataSource.getConnection();
                  var stmt = conn.prepareStatement(sql);
-                 var resultSet = stmt.executeQuery()) {
-                while (resultSet.next()) {
-                    status = resultSet.getInt("status_code");
-                    time = Timestamp.from(resultSet.getTimestamp("created_at").toInstant());
-                    id = resultSet.getLong("url_id");
-                    map.put(id, new UrlCheck(status, time));
+                 var rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    urlId = rs.getLong("url_id");
+                    status = rs.getInt("status_code");
+                    createdAt = rs.getTimestamp("created_at");
+
+                    UrlCheck check = new UrlCheck(status, createdAt);
+                    map.put(urlId, check);
                 }
             }
             return map;

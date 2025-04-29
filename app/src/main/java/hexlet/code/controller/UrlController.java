@@ -71,6 +71,7 @@ public class UrlController {
         try {
             List<Url> urls  = UrlRepository.getEntities();
             Map<Long, UrlCheck> checks = UrlCheckRepository.getLastCheckStatusAndTime();
+
             var page = new UrlsPage(urls, checks);
             ctx.render("pages/urlsPageTemplate.jte", model("page", page));
         } catch (SQLException e) {
